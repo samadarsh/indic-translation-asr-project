@@ -1,0 +1,24 @@
+# Root requirements for the entire project
+# Includes dependencies for both Task 1 (Jupyter, Translation) and Task 2 (ASR, Transliteration)
+
+# Task 1: Evaluation of Indic Translation Models
+jupyter
+notebook
+pandas
+matplotlib
+seaborn
+sacrebleu[ko]
+transformers
+torch
+sentencepiece
+accelerate
+# Optional depending on specific model usage
+# optimum
+
+# Task 2: ASR-Based Transcription and Transliteration System
+gradio
+openai-whisper
+indic-transliteration
+soundfile
+librosa
+pydub

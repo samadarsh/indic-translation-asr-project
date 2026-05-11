@@ -1,0 +1,61 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Project Specific
+data/raw/*.csv
+!data/raw/translation_dataset.csv
+data/raw/sample_audio/*.wav
+data/processed/**/*.csv
+data/processed/**/*.json
+data/processed/asr_outputs/*
+task2_asr_transliteration/outputs/transcripts/*
+task2_asr_transliteration/outputs/transliterations/*
+task2_asr_transliteration/sample_inputs/*.wav

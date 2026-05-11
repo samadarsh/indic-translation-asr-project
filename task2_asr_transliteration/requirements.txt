@@ -1,0 +1,9 @@
+# Task 2: ASR-Based Transcription and Transliteration System
+gradio==4.26.0
+openai-whisper==20231117
+indic-transliteration==2.3.56
+soundfile==0.12.1
+librosa==0.10.1
+pydub==0.25.1
+torch==2.2.2
+torchaudio==2.2.2
