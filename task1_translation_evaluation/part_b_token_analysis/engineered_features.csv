@@ -1,0 +1,6 @@
+model,avg_src_tokens,avg_tgt_tokens,avg_expansion,avg_word_length,avg_fragmentation,avg_unk_rate
+IndicTrans2,32.2,171.7,5.256,6.637,0.0,0.058
+MADLAD-3B,34.1,55.4,1.641,7.234,0.095,0.0
+NLLB-600M,32.8,43.4,1.366,7.478,0.095,0.0
+OpusMT-mul,30.2,61.7,2.421,5.276,0.004,0.0
+mT5-base,35.9,6.3,0.2,7.134,0.0,0.0

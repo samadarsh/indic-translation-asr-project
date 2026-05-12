@@ -1,0 +1,2 @@
+model,num_sentences,sacrebleu_score,bp,ratio
+ai4bharat/indictrans2-en-indic-1B,100,22.4231,0.9638,0.9645

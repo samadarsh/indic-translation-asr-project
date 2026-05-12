@@ -1,3 +1,6 @@
+.DS_Store
+**/.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -50,12 +53,24 @@ venv.bak/
 *~
 
 # Project Specific
+
+# Large FLORES raw files — keep locally, don't push to GitHub
+data/raw/flores200_dataset/
+data/raw/flores200_dataset.tar
+
+# Raw data — keep translation_dataset.csv committed for reproducibility
 data/raw/*.csv
 !data/raw/translation_dataset.csv
 data/raw/sample_audio/*.wav
+
+# Processed outputs
 data/processed/**/*.csv
 data/processed/**/*.json
 data/processed/asr_outputs/*
+
+# Task 2 generated outputs — exclude transcripts and transliterations
+# but keep the folder structure via .gitkeep
 task2_asr_transliteration/outputs/transcripts/*
+!task2_asr_transliteration/outputs/transcripts/.gitkeep
 task2_asr_transliteration/outputs/transliterations/*
-task2_asr_transliteration/sample_inputs/*.wav
+!task2_asr_transliteration/outputs/transliterations/.gitkeep

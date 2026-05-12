@@ -1,46 +1,51 @@
-import gradio as gr
-from asr_pipeline import process_audio
-from transliteration import transliterate_text
+# app/main.py
+# Entry point — starts the ASR + Transliteration Gradio app
 
-def transcribe_and_transliterate(audio_file):
-    if audio_file is None:
-        return "No audio provided.", ""
-    
-    # Placeholder logic
-    # In reality, you'd push this to the BufferManager, process via Whisper,
-    # and then run the transcript through the Indic-Transliteration engine.
-    
-    # 1. Transcript (Dummy)
-    transcript = "This is a placeholder transcript for the uploaded audio."
-    
-    # 2. Transliteration (Dummy)
-    transliteration = "திஸ் இஸ் அ ப்ளேஸ்ஹோல்டர் ட்ரான்ஸ்கிரிப்ட்"
-    
-    return transcript, transliteration
+import os
+import sys
+import logging
 
-def create_ui():
-    with gr.Blocks(title="Indic ASR & Transliteration") as interface:
-        gr.Markdown("# 🎙️ ASR & Transliteration System")
-        gr.Markdown("Upload an audio file or record from your microphone to get the English transcript and Tamil transliteration.")
-        
-        with gr.Row():
-            with gr.Column():
-                audio_input = gr.Audio(type="filepath", label="Audio Input")
-                submit_btn = gr.Button("Transcribe", variant="primary")
-                
-            with gr.Column():
-                transcript_output = gr.Textbox(label="English Transcript", lines=4)
-                transliteration_output = gr.Textbox(label="Tamil Transliteration", lines=4)
-                
-        submit_btn.click(
-            fn=transcribe_and_transliterate,
-            inputs=audio_input,
-            outputs=[transcript_output, transliteration_output]
-        )
-        
-    return interface
+# Add parent directory to path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app.interface import build_interface
+from app.utils import ensure_dirs
+from models.model_config import APP_CONFIG
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+
+def main():
+    logger.info("=" * 50)
+    logger.info("  Tamil ASR + Transliteration System")
+    logger.info("  Model  : openai/whisper-medium")
+    logger.info("  Script : Tamil → Harvard-Kyoto Romanization")
+    logger.info("=" * 50)
+
+    # Ensure output directories exist
+    ensure_dirs()
+
+    # Build Gradio interface
+    logger.info("Building Gradio interface...")
+    demo = build_interface()
+
+    # Launch app
+    logger.info(
+        f"Launching app on "
+        f"http://{APP_CONFIG['host']}:{APP_CONFIG['port']}"
+    )
+
+    demo.launch(
+        server_name=APP_CONFIG["host"],
+        server_port=APP_CONFIG["port"],
+        share=APP_CONFIG["share"],
+    )
+
 
 if __name__ == "__main__":
-    app = create_ui()
-    # Gradio needs server_name="0.0.0.0" to be accessible outside the Docker container
-    app.launch(server_name="0.0.0.0", server_port=7860)
+    main()
