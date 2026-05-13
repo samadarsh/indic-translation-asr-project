@@ -24,7 +24,7 @@ def main():
     logger.info("=" * 50)
     logger.info("  Tamil ASR + Transliteration System")
     logger.info("  Model  : openai/whisper-medium")
-    logger.info("  Script : Tamil → Harvard-Kyoto Romanization")
+    logger.info("  Script : Tamil → Tamil-Aware Latin (ASCII) Romanization")
     logger.info("=" * 50)
 
     # Ensure output directories exist

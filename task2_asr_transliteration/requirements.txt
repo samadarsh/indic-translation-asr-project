@@ -2,7 +2,7 @@
 openai-whisper==20250625
 
 # Transliteration
-indic-transliteration>=2.3.57
+# (Custom in-house Tamil grapheme romanizer — no external dependency)
 
 # Interface
 gradio>=4.44.0

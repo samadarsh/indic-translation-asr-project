@@ -25,7 +25,8 @@ task1_translation_evaluation/
 │   │   ├── histogram_token_counts.png
 │   │   ├── boxplot_expansion_ratios.png
 │   │   ├── scatter_source_vs_target.png
-│   │   └── bar_avg_expansion.png
+│   │   ├── bar_avg_expansion.png
+│   │   └── token_analysis.png
 │   └── observations.md
 └── part_c_indic_token_behavior/
     ├── part_c_indic_token_analysis.ipynb

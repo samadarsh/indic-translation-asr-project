@@ -10,7 +10,7 @@ ASR_CONFIG = {
 
 TRANSLITERATION_CONFIG = {
     "src_script": "tamil",
-    "tgt_script": "hk",       # Harvard-Kyoto romanization for Tamil
+    "tgt_script": "ascii_latin",   # Tamil-aware Latin (ASCII) Romanization
 }
 
 BUFFER_CONFIG = {

@@ -8,9 +8,11 @@ WORKDIR /app
 
 # Install system dependencies
 # ffmpeg required for audio processing by whisper
+# curl required for docker-compose healthcheck
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     git \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

@@ -1,24 +1,39 @@
 # Root requirements for the entire project
-# Includes dependencies for both Task 1 (Jupyter, Translation) and Task 2 (ASR, Transliteration)
+# Covers Task 1 (Translation Evaluation) and Task 2 (ASR + Transliteration)
 
-# Task 1: Evaluation of Indic Translation Models
-jupyter
-notebook
-pandas
-matplotlib
-seaborn
-sacrebleu[ko]
-transformers
-torch
-sentencepiece
-accelerate
-# Optional depending on specific model usage
-# optimum
+# ── Core ML / Deep Learning ──────────────────────────────────────────────────
+torch>=2.1.0
+torchaudio>=2.1.0
+transformers>=4.36.0
+accelerate>=0.24.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0
 
-# Task 2: ASR-Based Transcription and Transliteration System
-gradio
-openai-whisper
-indic-transliteration
-soundfile
-librosa
-pydub
+# ── Task 1: Translation Evaluation ───────────────────────────────────────────
+sacrebleu>=2.3.1
+indic-nlp-library>=0.91
+IndicTransToolkit @ git+https://github.com/VarunGumma/IndicTransToolkit.git
+
+# ── Task 2: ASR + Transliteration ────────────────────────────────────────────
+openai-whisper>=20250625
+gradio>=4.44.0
+ffmpeg-python>=0.2.0
+pydub>=0.25.1
+soundfile>=0.12.1
+
+# ── Data & Visualisation ─────────────────────────────────────────────────────
+pandas>=2.0.0
+numpy>=1.26.4
+matplotlib>=3.7.0
+seaborn>=0.13.0
+
+# ── Notebook ──────────────────────────────────────────────────────────────────
+jupyter>=1.0.0
+notebook>=7.0.0
+ipykernel>=6.0.0
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+python-dotenv>=1.0.0
+tqdm>=4.65.0
+datasets>=2.14.0
+pytest>=9.0.0

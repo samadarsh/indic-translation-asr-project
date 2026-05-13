@@ -1,0 +1,36 @@
+# .dockerignore
+# Excludes build artifacts and host-only files from the Docker build context.
+# Keeps the image small and the build fast.
+
+# Python bytecode and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+
+# Local outputs (mounted as a volume in docker-compose.yml, so no need to bake into image)
+outputs/transcripts/*
+outputs/transliterations/*
+!outputs/transcripts/.gitkeep
+!outputs/transliterations/.gitkeep
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Type-checker config (host-only, not needed at runtime)
+pyrightconfig.json
+
+# Git metadata (never present here since build context is task2_asr_transliteration/, but defensive)
+.git/
+.gitignore
+
+# Docker files themselves (avoid recursive copy noise)
+Dockerfile
+docker-compose.yml
+.dockerignore

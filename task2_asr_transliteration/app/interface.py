@@ -62,7 +62,10 @@ def process_audio(audio_path: str) -> tuple:
 def build_interface() -> gr.Blocks:
     ensure_dirs()
 
-    with gr.Blocks(title="Tamil ASR + Transliteration System") as demo:
+    with gr.Blocks(
+        title="Tamil ASR + Transliteration System",
+        theme=gr.themes.Soft(primary_hue="violet", secondary_hue="purple"),
+    ) as demo:
 
         gr.Markdown(
             """
@@ -100,7 +103,7 @@ def build_interface() -> gr.Blocks:
                     interactive=False,
                 )
                 transliteration_output = gr.Textbox(
-                    label="🔤 Romanized Transliteration (Harvard-Kyoto)",
+                    label="🔤 Romanized Tamil (ASCII)",
                     placeholder="Romanized text will appear here...",
                     lines=8,
                     interactive=False,
@@ -114,20 +117,24 @@ def build_interface() -> gr.Blocks:
                 **Transliteration** converts Tamil script to Romanized form.
                 It does **not** translate the meaning — only the writing system changes.
 
-                | Input (Tamil Script) | Output (Romanized HK) |
+                | Input (Tamil Script) | Output (Romanized ASCII) |
                 |---|---|
                 | நான் சாப்பிட்டேன் | naan saappittaen |
                 | தமிழ் மொழி | tamiL moLi |
-                | செயற்கை நுண்ணறிவு | jhèyar2ghai nuNNarivu |
+                | செயற்கை நுண்ணறிவு | seyaRkai nuNNaRivu |
+                | நான் ஒரு மென்பொருள் பொறியாளர் | naan oru menporuL poRiyaaLar |
 
-                **Scheme:** Harvard-Kyoto (HK) Romanization via `indic-transliteration`
+                **Scheme:** Tamil-Aware Latin (ASCII) Romanization — long vowels doubled
+                (`aa`, `ii`, `uu`, `oo`), retroflex consonants capitalized
+                (`N`, `L`, `R`).
                 """
             )
 
         gr.Markdown(
             """
             ---
-            Powered by `openai/whisper-medium` and `indic-transliteration`
+            🔗 [GitHub Repository](https://github.com/samadarsh/indic-translation-asr-project)
+            &nbsp;·&nbsp; Powered by `openai/whisper-medium` and a custom Tamil-aware grapheme romanizer.
             """
         )
 

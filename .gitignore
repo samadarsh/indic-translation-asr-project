@@ -30,7 +30,6 @@ share/python-wheels/
 MANIFEST
 
 # Virtual Environments
-.env
 .venv
 env/
 venv/
@@ -61,12 +60,16 @@ data/raw/flores200_dataset.tar
 # Raw data — keep translation_dataset.csv committed for reproducibility
 data/raw/*.csv
 !data/raw/translation_dataset.csv
+# Sample demo audio is small (117 KB) and named by the submission
+# guide — keep it tracked; ignore any other raw WAVs by default.
 data/raw/sample_audio/*.wav
+!data/raw/sample_audio/sample.wav
 
 # Processed outputs
-data/processed/**/*.csv
-data/processed/**/*.json
-data/processed/asr_outputs/*
+# Canonical submission copies under data/processed/ are tracked
+# (small CSVs from Task 1 notebooks and a couple of ASR sample
+# outputs). Runtime-only or regenerated files can still be ignored
+# here on a case-by-case basis if they ever grow.
 
 # Task 2 generated outputs — exclude transcripts and transliterations
 # but keep the folder structure via .gitkeep
@@ -74,3 +77,23 @@ task2_asr_transliteration/outputs/transcripts/*
 !task2_asr_transliteration/outputs/transcripts/.gitkeep
 task2_asr_transliteration/outputs/transliterations/*
 !task2_asr_transliteration/outputs/transliterations/.gitkeep
+
+# Matplotlib cache (created by notebooks at runtime)
+.mplconfig/
+
+# Reference / source documents kept locally but not redistributed
+Round-2_Hands-On_Projects_Submission_Guide.pdf
+
+# Drive-folder README — uploaded to Google Drive, not GitHub
+presentation/drive_readme.txt
+
+# Local-only report generator (not part of the submitted deliverables)
+generate_summaries.py
+
+# Demo recordings live on Google Drive (links in docs/recordings/),
+# not in the repo. Defensive ignore in case they get re-exported here.
+docs/recordings/*.mov
+docs/recordings/*.MOV
+docs/recordings/*.mp4
+docs/recordings/*.MP4
+docs/recordings/*.mkv

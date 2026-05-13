@@ -1,0 +1,6 @@
+model,avg_src_tokens,avg_tgt_tokens,avg_expansion,avg_word_length,avg_fragmentation,avg_unk_rate,source_x,total_tokens,unique_tokens,rare_token_rate,tamil_coverage,vocab_size,source_y
+IndicTrans2,32.2,171.7,5.256,6.637,0.0,0.058,Part B - Token Analysis,1709,65,0.262,0.0,32322,Part C - Indic Token Behavior
+MADLAD-3B,34.1,55.4,1.641,7.234,0.095,0.0,Part B - Token Analysis,571,319,0.636,0.862,256000,Part C - Indic Token Behavior
+NLLB-600M,32.8,43.4,1.366,7.478,0.095,0.0,Part B - Token Analysis,504,324,0.704,0.905,256204,Part C - Indic Token Behavior
+OpusMT-mul,30.2,61.7,2.421,5.276,0.004,0.0,Part B - Token Analysis,1646,83,0.361,0.856,64110,Part C - Indic Token Behavior
+mT5-base,35.9,6.3,0.2,7.134,0.0,0.0,Part B - Token Analysis,495,309,0.738,0.853,250100,Part C - Indic Token Behavior

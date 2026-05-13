@@ -1,7 +1,10 @@
 # Task 2 — ASR-Based Transcription and Transliteration System
 
 A fully deployable Tamil ASR and transliteration system built with
-Whisper, indic-transliteration, and Gradio. Runs locally or inside Docker.
+Whisper, a custom Tamil-aware Latin (ASCII) romanizer, and Gradio.
+Runs locally or inside Docker.
+
+![Gradio UI — Tamil ASR + Transliteration System](screenshots/gradio_ui.png)
 
 ---
 
@@ -16,7 +19,7 @@ ASR Module (openai/whisper-medium)
      ↓
 Transcript (Tamil script)
      ↓
-Transliteration Engine (indic-transliteration)
+Transliteration Engine (custom Tamil → ASCII)
      ↓
 User Interface (Gradio — port 7860)
 ```
@@ -34,7 +37,8 @@ task2_asr_transliteration/
 ├── app/
 │   ├── main.py              — entry point
 │   ├── asr_pipeline.py      — Whisper ASR
-│   ├── transliteration.py   — indic-transliteration
+│   ├── transliteration.py   — pipeline wrapper
+│   ├── tamil_romanizer.py   — custom Tamil → ASCII grapheme mapper
 │   ├── buffer_manager.py    — queue-based buffer
 │   ├── interface.py         — Gradio UI
 │   └── utils.py             — helpers, file saving
@@ -42,6 +46,8 @@ task2_asr_transliteration/
 │   └── model_config.py      — central config
 ├── sample_inputs/
 │   └── sample.wav           — Tamil sample audio
+├── screenshots/
+│   └── gradio_ui.png        — UI screenshot
 ├── outputs/
 │   ├── transcripts/         — saved transcripts
 │   └── transliterations/    — saved transliterations
@@ -56,7 +62,7 @@ task2_asr_transliteration/
 | Component | Tool |
 |---|---|
 | ASR Model | `openai/whisper-medium` |
-| Transliteration | `indic-transliteration` (Harvard-Kyoto scheme) |
+| Transliteration | Custom Tamil-aware Latin (ASCII) Romanization (`app/tamil_romanizer.py`) |
 | Interface | Gradio 4.44.0 |
 | Containerization | Docker + docker-compose |
 | Audio Processing | ffmpeg |
@@ -155,8 +161,9 @@ python tests/test_pipeline.py
 2. **Buffer queue** — audio is added to a `queue.Queue()` buffer for
    chunked processing, preventing overflow
 3. **ASR** — Whisper-medium transcribes the audio to Tamil script
-4. **Transliteration** — `indic-transliteration` converts Tamil script
-   to Romanized text using Harvard-Kyoto scheme
+4. **Transliteration** — a custom Tamil-aware grapheme romanizer
+   (`app/tamil_romanizer.py`) converts Tamil script to clean ASCII Latin
+   text (long vowels doubled, retroflex consonants capitalized)
 5. **Output** — both transcript and transliteration are displayed in
    the Gradio interface and saved to `outputs/`
 

@@ -1,5 +1,5 @@
 # app/transliteration.py
-# Indic transliteration pipeline — Tamil script to Romanized text
+# Indic transliteration pipeline — Tamil script -> Romanized ASCII text.
 
 import os
 import sys
@@ -7,19 +7,19 @@ import logging
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from indic_transliteration import sanscript
-from indic_transliteration.sanscript import transliterate
-
-from models.model_config import TRANSLITERATION_CONFIG
+from app.tamil_romanizer import tamil_to_ascii
 from app.utils import save_transliteration
+from models.model_config import TRANSLITERATION_CONFIG
 
 logger = logging.getLogger(__name__)
 
 
 class TransliterationPipeline:
     """
-    Transliteration pipeline using the indic-transliteration library.
-    Converts Tamil script → Romanized text (Harvard-Kyoto scheme).
+    Transliteration pipeline using a custom Tamil-aware Latin (ASCII)
+    grapheme romanizer (see ``app.tamil_romanizer``).
+
+    Converts Tamil script -> Romanized ASCII text.
 
     Note: This is transliteration (script conversion), NOT translation.
     The meaning stays the same — only the writing system changes.
@@ -39,7 +39,7 @@ class TransliterationPipeline:
 
     def transliterate(self, text: str) -> str:
         """
-        Transliterate Tamil script text to Romanized form.
+        Transliterate Tamil script text to Romanized ASCII form.
         Returns romanized string.
         """
         if not text or not text.strip():
@@ -49,11 +49,7 @@ class TransliterationPipeline:
         logger.info(f"Transliterating: {text[:60]}...")
 
         try:
-            result = transliterate(
-                text,
-                sanscript.TAMIL,
-                sanscript.HK        # Harvard-Kyoto romanization
-            )
+            result = tamil_to_ascii(text)
             logger.info(f"Transliteration result: {result[:60]}...")
             return result.strip()
 
@@ -76,9 +72,9 @@ class TransliterationPipeline:
         Useful for displaying in the UI.
         """
         return {
-            "source_script": "Tamil (Unicode)",
-            "target_scheme": "Harvard-Kyoto (HK) Romanization",
-            "library":       "indic-transliteration",
-            "example_input": "நான் சாப்பிட்டேன்",
+            "source_script":  "Tamil (Unicode)",
+            "target_scheme":  "Tamil-Aware Latin (ASCII) Romanization",
+            "library":        "in-house grapheme mapping (app.tamil_romanizer)",
+            "example_input":  "நான் சாப்பிட்டேன்",
             "example_output": "naan saappittaen",
         }
