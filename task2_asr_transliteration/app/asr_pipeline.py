@@ -12,7 +12,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models.model_config import ASR_CONFIG, BUFFER_CONFIG
 from app.buffer_manager import BufferManager
-from app.utils import validate_audio_file, save_transcript
+from app.utils import (
+    validate_audio_file,
+    save_transcript,
+    split_audio,
+    cleanup_chunks,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -78,28 +83,98 @@ class ASRPipeline:
 
     def transcribe_with_buffer(self, audio_path: str) -> str:
         """
-        Transcribe using the buffer queue system.
-        Adds audio to buffer, processes it, returns transcript.
+        Transcribe an audio file using a real chunked buffer pipeline with
+        bounded batching.
+
+        Flow:
+          1. Split the audio into fixed-duration chunks (≤ chunk_duration s).
+          2. Process chunks in bounded batches: fill the BufferManager queue
+             up to max_queue_size, drain it through Whisper, then load the
+             next batch. This bounds peak queue size while guaranteeing every
+             chunk is transcribed regardless of total audio length.
+          3. Concatenate the per-chunk transcripts into a single string.
+          4. Clean up temporary chunk files in a finally block.
+
+        Defensive fallbacks (in order of preference):
+          - If splitting fails for any reason, transcribe the original file.
+          - If buffer processing yields no results, transcribe the original
+            file in one shot.
         """
         if not validate_audio_file(audio_path):
             raise FileNotFoundError(f"Invalid audio file: {audio_path}")
 
-        # Add to buffer queue
-        added = self.buffer.add_chunk(audio_path)
-        if not added:
-            logger.warning("Buffer full — processing directly")
+        chunk_seconds = BUFFER_CONFIG.get("chunk_duration", 30)
+        sample_rate   = BUFFER_CONFIG.get("sample_rate", 16000)
+
+        try:
+            chunk_paths = split_audio(
+                audio_path,
+                chunk_seconds=chunk_seconds,
+                sample_rate=sample_rate,
+            )
+        except Exception as e:
+            logger.warning(
+                f"Audio split failed ({e}) — falling back to direct transcription"
+            )
             return self.transcribe(audio_path)
 
-        # Process from buffer
-        results = self.buffer.process_all(self.transcribe)
+        is_temp_split = bool(chunk_paths) and chunk_paths[0] != audio_path
+        total_chunks  = len(chunk_paths)
+        max_q         = self.buffer.max_queue_size or max(total_chunks, 1)
+        num_batches   = (total_chunks + max_q - 1) // max_q  # ceiling div
+
+        if num_batches > 1:
+            logger.info(
+                f"Audio yielded {total_chunks} chunks; processing in "
+                f"{num_batches} batches of up to {max_q}"
+            )
+
+        results = []
+        try:
+            self.buffer.clear()
+
+            i = 0
+            batch_idx = 0
+            while i < total_chunks:
+                batch_idx += 1
+                enqueued_in_batch = 0
+                while i < total_chunks:
+                    if self.buffer.add_chunk(chunk_paths[i]):
+                        enqueued_in_batch += 1
+                        i += 1
+                    else:
+                        break  # queue full — drain before continuing
+
+                if enqueued_in_batch == 0:
+                    logger.warning(
+                        "Could not enqueue any chunks in this batch — "
+                        "aborting batch loop"
+                    )
+                    break
+
+                log_prefix = (
+                    f"Batch {batch_idx}/{num_batches}: "
+                    if num_batches > 1 else ""
+                )
+                logger.info(
+                    f"{log_prefix}processing {enqueued_in_batch} "
+                    f"chunk(s) from buffer..."
+                )
+                batch_results = self.buffer.process_all(self.transcribe)
+                results.extend(batch_results)
+        finally:
+            if is_temp_split:
+                cleanup_chunks(chunk_paths)
 
         if not results:
-            logger.warning("No results from buffer — transcribing directly")
+            logger.warning("No results from buffer — falling back to direct transcription")
             return self.transcribe(audio_path)
 
-        # Join all chunk transcripts
-        full_transcript = " ".join(results)
-        logger.info(f"Buffer transcription complete: {len(results)} chunks")
+        full_transcript = " ".join(r for r in results if r).strip()
+        logger.info(
+            f"Buffer transcription complete: {len(results)} chunk(s) joined "
+            f"({len(full_transcript)} chars)"
+        )
         return full_transcript
 
     def transcribe_and_save(self, audio_path: str) -> tuple:

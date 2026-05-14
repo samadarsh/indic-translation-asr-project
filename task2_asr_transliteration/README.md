@@ -13,9 +13,13 @@ Runs locally or inside Docker.
 ```
 Audio Input
      ↓
-Buffer Queue (queue.Queue)
+Audio Splitter (≤30 s chunks via pydub)
      ↓
-ASR Module (openai/whisper-medium)
+Buffer Queue (queue.Queue, maxsize=10)
+     ↓
+ASR Module (openai/whisper-medium) — one call per chunk
+     ↓
+Per-chunk transcripts → concatenated
      ↓
 Transcript (Tamil script)
      ↓
@@ -157,15 +161,25 @@ python tests/test_pipeline.py
 
 ## How It Works
 
-1. **Upload audio** — upload a Tamil `.wav` file or record via microphone
-2. **Buffer queue** — audio is added to a `queue.Queue()` buffer for
-   chunked processing, preventing overflow
-3. **ASR** — Whisper-medium transcribes the audio to Tamil script
-4. **Transliteration** — a custom Tamil-aware grapheme romanizer
+1. **Upload audio** — upload a Tamil `.wav` file or record via microphone.
+2. **Audio splitting** — the input is split into fixed-duration chunks
+   (≤30 s by default; configurable via `BUFFER_CONFIG.chunk_duration`).
+   Files shorter than the chunk duration pass through unchanged, so the
+   short-audio path stays zero-cost.
+3. **Buffer queue (bounded batches)** — chunks are enqueued into a
+   thread-safe `queue.Queue()` (`BufferManager`, capacity 10) and
+   processed in bounded batches: the buffer fills up to 10 chunks,
+   those are drained through Whisper, and the next batch is loaded.
+   Peak queue size stays bounded while every chunk is transcribed
+   regardless of total audio length (e.g. 25 chunks → 3 batches).
+4. **ASR** — Whisper-medium transcribes each chunk to Tamil script. The
+   per-chunk transcripts are concatenated to form the full transcript.
+   Temporary chunk files are cleaned up in a `finally` block.
+5. **Transliteration** — a custom Tamil-aware grapheme romanizer
    (`app/tamil_romanizer.py`) converts Tamil script to clean ASCII Latin
-   text (long vowels doubled, retroflex consonants capitalized)
-5. **Output** — both transcript and transliteration are displayed in
-   the Gradio interface and saved to `outputs/`
+   text (long vowels doubled, retroflex consonants capitalized).
+6. **Output** — both transcript and transliteration are displayed in
+   the Gradio interface and saved to `outputs/`.
 
 ---
 

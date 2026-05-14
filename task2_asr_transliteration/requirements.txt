@@ -9,6 +9,7 @@ gradio>=4.44.0
 
 # Audio processing
 ffmpeg-python==0.2.0
+pydub>=0.25.1
 
 # ML / Torch
 torch>=2.1.0
