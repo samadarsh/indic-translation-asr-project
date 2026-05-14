@@ -4,7 +4,7 @@ A fully deployable Tamil ASR and transliteration system built with
 Whisper, a custom Tamil-aware Latin (ASCII) romanizer, and Gradio.
 Runs locally or inside Docker.
 
-![Gradio UI — Tamil ASR + Transliteration System](screenshots/gradio_ui.png)
+![Gradio UI — Tamil ASR + Transliteration System](screenshots/gradio_ui.jpeg)
 
 ---
 
@@ -51,7 +51,7 @@ task2_asr_transliteration/
 ├── sample_inputs/
 │   └── sample.wav           — Tamil sample audio
 ├── screenshots/
-│   └── gradio_ui.png        — UI screenshot
+│   └── gradio_ui.jpeg       — UI screenshot
 ├── outputs/
 │   ├── transcripts/         — saved transcripts
 │   └── transliterations/    — saved transliterations
